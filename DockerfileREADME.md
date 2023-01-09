@@ -1,46 +1,29 @@
 # 制作docker镜像
 
-**背景**
+#####初始化
 
-偶然间看到作者的程序，感觉作者做的很炫酷，自己也想部署一个。 作者只提供服务器部署方式，自己萌生了制作了镜像版本的想法，根据作者的部署说明，制作一版docker镜像，自己亲测，可在linux docker环境下部署运行。docker镜像使用很方便快捷，欢迎大家使用。下面详细记录镜像制作和使用说明。  
+172.16.11.193
+cd /usr/local
 
-最后，非常感谢作者提供的程序。
+git clone https://github.com/annisun2020/lottery.git
 
-**使用说明**
+cd /usr/local/lottery
 
-1. 将源代码打包成 tar.gz 格式
+docker build -t lottery .
 
-```shel
-tar -czvf lottery.tar.gz lottery/
-```
+docker run -d -p 28888:8888  -v /usr/local/lottery/server:/lottery/server  -v /usr/local/lottery/server/img:/lottery/product/dist/img --name lottery  lottery
 
-2. 创建Dockerfile、构建镜像。Dockerfile见程序根目录的Dockerfile文件
 
-   ```shell
-   cp Dockerfile .
-   docker build -t lucky:v01 .
-   ```
 
-3. 运行dockers ，对外服务端口 28888
 
-   - 方法一、无挂载文件
+#####更新配置
+更新抽奖用户列表:/usr/local/lottery/server/data/users.xlsx
 
-     ```shell
-     docker run -d -p 28888:8888  --name luckyGame  lucky:v01
-     ```
+更新奖品列表:/usr/local/lottery/server/config.js
 
-     
+更新奖品图片:/usr/local/lottery/server/img
 
-   - 方法二、 将本地excel目录（比如当前目录"$PWD"）挂载到容器中的excel 目录上
 
-     ```shell
-     docker run -d -p 28888:8888  -v /home/docker/lottery/config/:/lottery/server/data/  --name luckyGame  lucky:v01
-     ```
+更新图片、奖项、用户信息后重启容器
 
-4.  访问服务（这里使用本地ip地址，可自行换成实际服务ip）
-
-   http://127.0.0.1:28888
-
-5.  我的打包镜像已经上传到docker, 如下
-   https://hub.docker.com/r/yiliangjianghu/luckygame
-   docker pull yiliangjianghu/luckygame
+docker restart lottery
